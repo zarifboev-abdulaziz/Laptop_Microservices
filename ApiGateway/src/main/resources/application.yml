@@ -1,0 +1,38 @@
+server:
+  port: 8086
+
+management:
+  endpoint.gateway.enabled: true
+  endpoints.web.exposure.include: gateway
+
+spring:
+  application:
+    name: ApiGateway
+  cloud:
+    gateway:
+      routes:
+        - id: laptop-service
+          uri: lb://LAPTOP-SERVICE
+          predicates:
+            - Path=/api/laptop-service/**, /api/cart-service/**, /api/purchase-service/**
+          filters:
+            - AuthFilter
+        - id: laptop-review-service
+          uri: lb://LAPTOP-REVIEW-SERVICE
+          predicates:
+            - Path=/api/laptop-review-service/**
+          filters:
+             - AuthFilter
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/api/auth-service/**,/api/**
+  main:
+    allow-bean-definition-overriding: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true

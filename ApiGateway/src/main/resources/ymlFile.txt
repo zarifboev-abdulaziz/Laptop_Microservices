@@ -1,0 +1,48 @@
+server:
+  port: 8086
+spring:
+  application:
+    name: ApiGateway
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/user-service/**
+        - id: attachment-service
+          uri: lb://attachment-service
+          predicates:
+            - Path=/api/attachment-service/**
+        - id: laptop-review-service
+          uri: lb://laptop-review-service
+          predicates:
+            - Path=/api/laptop-review-service/**
+        - id: laptop-service
+          uri: lb://laptop-service
+          predicates:
+            - Path=/api/laptop-service/**
+#          filters:
+#            name: CircuitBreaker
+#            args:
+#              - name: laptop-service
+#              - fallbackuri: forward:/fall-back-uri
+#hystrix:
+#  command:
+#    fallbackcommand:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 5000
+#
+#management:
+#  endpoint:
+#    web:
+#      exposure:
+#        include: hystrix.stream
+#
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
